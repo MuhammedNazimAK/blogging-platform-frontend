@@ -10,6 +10,7 @@ describe('LoginComponent', () => {
     TestBed.configureTestingModule({
       declarations: [LoginComponent]
     });
+
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -19,3 +20,4 @@ describe('LoginComponent', () => {
     expect(component).toBeTruthy();
   });
 });
+

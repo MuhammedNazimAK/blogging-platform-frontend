@@ -7,6 +7,7 @@ import { AuthService } from 'src/app/services/auth.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
+
 export class LoginComponent {
   email!: '';
   password!: '';
@@ -14,6 +15,7 @@ export class LoginComponent {
   constructor (private authService: AuthService) {}
 
   login() {
+    
     this.authService.login({ email: this.email, password: this.password}).subscribe({
       next: (response) => console.log('Login successfull:', response),
       error: (err) => console.log('Login error', err),
