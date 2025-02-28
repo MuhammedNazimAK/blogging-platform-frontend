@@ -1,28 +1,41 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { MatDialogModule } from '@angular/material/dialog'
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { LoginComponent } from './components/authentication/login/login.component';
-import { SignupComponent } from './components/authentication/signup/signup.component';
-import { HomeComponent } from './components/dashboard/home/home.component';
-import { BlogListingComponent } from './components/dashboard/blog-listing/blog-listing.component';
-import { BlogDetailsComponent } from './components/blog-details/blog-details.component';
-import { UserProfileComponent } from './components/user-profile/user-profile.component';
+import { HomeComponent } from './home/home.component';
+import { LoginComponent } from './authentication/login/login.component';
+import { SignupComponent } from './authentication/signup/signup.component';
+import { BlogDetailComponent } from './blog/blog-detail/blog-detail.component';
+import { BlogListComponent } from './blog/blog-listing/blog-listing.component';
+import { NavbarComponent } from './shared/navbar/navbar.component';
+import { FooterComponent } from './shared/footer/footer.component';
+import { AuthModalComponent } from './shared/auth-modal/auth-modal.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
     AppComponent,
+    HomeComponent,
     LoginComponent,
     SignupComponent,
-    HomeComponent,
-    BlogListingComponent,
-    BlogDetailsComponent,
-    UserProfileComponent
+    BlogDetailComponent,
+    BlogListComponent,
+    NavbarComponent,
+    FooterComponent,
+    AuthModalComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    ReactiveFormsModule,
+    HttpClientModule,
+    FormsModule,
+    BrowserAnimationsModule,
+    MatDialogModule
   ],
   providers: [],
   bootstrap: [AppComponent]

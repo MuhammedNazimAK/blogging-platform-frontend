@@ -1,0 +1,51 @@
+<div *ngIf="(authService.authModalState$ | async)?.isOpen" class="modal-overlay">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h2>{{ (authService.authModalState$ | async)?.mode === 'login' ? 'Login' : 'Sign Up' }}</h2>
+      <button (click)="authService.closeAuthModal()" class="close-button">×</button>
+    </div>
+    
+    <div class="modal-body">
+      <form [formGroup]="authForm" (ngSubmit)="submitForm()">
+        <div class="form-group" *ngIf="(authService.authModalState$ | async)?.mode === 'signup'">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" formControlName="name" class="form-control">
+          <small *ngIf="authForm.get('name')?.touched && authForm.get('name')?.invalid" class="error-message">
+            Name is required
+          </small>
+        </div>
+        
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" formControlName="email" class="form-control">
+          <small *ngIf="authForm.get('email')?.touched && authForm.get('email')?.invalid" class="error-message">
+            Valid email is required
+          </small>
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" formControlName="password" class="form-control">
+          <small *ngIf="authForm.get('password')?.touched && authForm.get('password')?.invalid" class="error-message">
+            Password must be at least 6 characters
+          </small>
+        </div>
+        
+        <button type="submit" [disabled]="authForm.invalid || isSubmitting" class="submit-button">
+          {{ isSubmitting ? 'Please wait...' : ((authService.authModalState$ | async)?.mode === 'login' ? 'Login' : 'Sign Up') }}
+        </button>
+      </form>
+      
+      <div class="modal-footer">
+        <p *ngIf="(authService.authModalState$ | async)?.mode === 'login'">
+          Don't have an account? 
+          <button (click)="switchMode('signup')" class="switch-button">Sign Up</button>
+        </p>
+        <p *ngIf="(authService.authModalState$ | async)?.mode === 'signup'">
+          Already have an account? 
+          <button (click)="switchMode('login')" class="switch-button">Login</button>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

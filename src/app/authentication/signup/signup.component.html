@@ -1,0 +1,63 @@
+<section class="flex items-center justify-center bg-gray-100/50 backdrop-blur-sm">
+  <div class="bg-white rounded-xl shadow-2xl p-8 w-96 relative overflow-hidden">
+    <!-- Gradient Background Elements -->
+    <div class="absolute -top-20 -right-20 w-48 h-48 bg-purple-200/30 rounded-full blur-2xl"></div>
+    <div class="absolute -bottom-20 -left-20 w-48 h-48 bg-indigo-200/30 rounded-full blur-2xl"></div>
+    
+    <h2 class="text-3xl font-bold mb-6 bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+      Join Our Community
+    </h2>
+    
+    <form (submit)="signup()" class="relative">
+      <div class="mb-5">
+        <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Name</label>
+        <input
+          type="text"
+          id="name"
+          [(ngModel)]="user.name"
+          name="name"
+          class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
+          required
+        />
+      </div>
+      
+      <div class="mb-5">
+        <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+        <input
+          type="email"
+          id="email"
+          [(ngModel)]="user.email"
+          name="email"
+          class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
+          required
+        />
+      </div>
+      
+      <div class="mb-6">
+        <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+        <input
+          type="password"
+          id="password"
+          [(ngModel)]="user.password"
+          name="password"
+          class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
+          required
+        />
+      </div>
+      
+      <button
+        type="submit"
+        class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-lg font-semibold 
+               hover:from-purple-700 hover:to-indigo-700 transition-all transform hover:-translate-y-0.5
+               shadow-md hover:shadow-lg"
+      >
+        Create Account
+      </button>
+    </form>
+
+    <p class="mt-6 text-center text-sm text-gray-600">
+      Already have an account? 
+      <span class="text-purple-600 font-semibold hover:text-purple-700 cursor-pointer">Sign in</span>
+    </p>
+  </div>
+</section>
