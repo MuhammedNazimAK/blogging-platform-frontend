@@ -2,7 +2,8 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { MatDialogModule } from '@angular/material/dialog'
+import { MatDialogModule } from '@angular/material/dialog';
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -13,7 +14,7 @@ import { BlogDetailComponent } from './blog/blog-detail/blog-detail.component';
 import { BlogListComponent } from './blog/blog-listing/blog-listing.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { FooterComponent } from './shared/footer/footer.component';
-import { AuthModalComponent } from './shared/auth-modal/auth-modal.component';
+import { AuthModalContainerComponent } from './shared/auth-modal/auth-modal-container.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
@@ -26,7 +27,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     BlogListComponent,
     NavbarComponent,
     FooterComponent,
-    AuthModalComponent
+    AuthModalContainerComponent,
   ],
   imports: [
     BrowserModule,
@@ -35,7 +36,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     HttpClientModule,
     FormsModule,
     BrowserAnimationsModule,
-    MatDialogModule
+    MatDialogModule,
+    InfiniteScrollModule
   ],
   providers: [],
   bootstrap: [AppComponent]

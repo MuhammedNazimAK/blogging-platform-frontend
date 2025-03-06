@@ -1,4 +1,3 @@
-/* Additional custom styles that complement Tailwind */
 @keyframes float {
   0% { transform: translateY(0px); }
   50% { transform: translateY(-10px); }
@@ -9,7 +8,7 @@
   box-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
 }
 
-/* Add this class to any element you want to have a subtle floating animation */
+/* Add this class to any element want to have a subtle floating animation */
 .floating {
   animation: float 6s ease-in-out infinite;
 }

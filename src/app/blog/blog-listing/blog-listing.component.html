@@ -1,140 +1,173 @@
-<section class="bg-white py-12 md:py-20">
+<div class="border-t border-gray-200"></div>
+
+<section class="bg-white">
   <div class="container mx-auto px-6">
-    <!-- Page Header -->
-    <div class="mb-12 md:mb-16">
-      <h1 class="text-3xl md:text-5xl font-bold text-gray-900 mb-4">Our Blog</h1>
-      <p class="text-lg text-gray-600 max-w-2xl">Explore the latest insights, tutorials, and perspectives from our community of thinkers and creators.</p>
-    </div>
-
-    <!-- Loading state -->
-    <div *ngIf="loading" class="flex justify-center py-12">
-      <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
-    </div>
-
-    <!-- Featured Post -->
-    <div *ngIf="featuredPost && !loading" class="mb-16 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-all">
-      <div class="flex flex-col md:flex-row">
-        <div class="md:w-1/2 h-64 md:h-auto bg-indigo-200 relative">
-          <!-- Featured image -->
-          <img *ngIf="featuredPost.imageUrl" [src]="featuredPost.imageUrl" alt="{{featuredPost.title}}" class="object-cover w-full h-full">
-          <div *ngIf="!featuredPost.imageUrl" class="absolute inset-0 bg-gradient-to-br from-indigo-400/40 to-purple-500/40"></div>
-          <div class="absolute top-4 left-4 bg-indigo-600 text-white text-sm font-medium px-3 py-1 rounded-full">Featured</div>
+    <div class="flex flex-col md:flex-row">
+      
+      <div class="md:w-2/3 md:pr-8">
+        <!-- Loading state with skeleton -->
+        <div *ngIf="loading" class="py-12">
+          <div class="mb-8">
+            <div class="h-8 bg-gray-200 rounded w-1/3 mb-4 animate-pulse"></div>
+            <div class="h-4 bg-gray-200 rounded w-full mb-2 animate-pulse"></div>
+            <div class="h-4 bg-gray-200 rounded w-3/4 mb-2 animate-pulse"></div>
+            <div class="h-4 bg-gray-200 rounded w-1/2 animate-pulse"></div>
+          </div>
+          
+          <div class="flex items-center mb-8">
+            <div class="w-10 h-10 rounded-full bg-gray-200 animate-pulse"></div>
+            <div class="ml-3 flex-1">
+              <div class="h-4 bg-gray-200 rounded w-1/4 mb-2 animate-pulse"></div>
+              <div class="h-3 bg-gray-200 rounded w-1/3 animate-pulse"></div>
+            </div>
+          </div>
+          
+          <div class="border-b border-gray-100 pb-8 mb-8">
+            <div class="h-4 bg-gray-200 rounded w-full mb-2 animate-pulse"></div>
+            <div class="h-4 bg-gray-200 rounded w-full mb-2 animate-pulse"></div>
+            <div class="h-4 bg-gray-200 rounded w-2/3 animate-pulse"></div>
+          </div>
+          
+          <!-- Repeat for more skeleton items -->
+          <div class="border-b border-gray-100 pb-8 mb-8">
+            <div class="h-4 bg-gray-200 rounded w-full mb-2 animate-pulse"></div>
+            <div class="h-4 bg-gray-200 rounded w-full mb-2 animate-pulse"></div>
+            <div class="h-4 bg-gray-200 rounded w-2/3 animate-pulse"></div>
+          </div>
         </div>
-        <div class="md:w-1/2 p-6 md:p-10 flex flex-col justify-center">
-          <div class="mb-4">
-            <!-- This would be dynamic based on categories in your model -->
-            <span class="px-3 py-1 bg-indigo-100 text-indigo-600 rounded-full text-sm font-medium">Technology</span>
-          </div>
-          <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">{{featuredPost.title}}</h2>
-          <p class="text-gray-600 mb-6">{{featuredPost.content?.substring(0, 150)}}...</p>
-          <div class="flex items-center mb-6">
-            <div *ngIf="featuredPost.user?.profileImageUrl" class="w-10 h-10 rounded-full overflow-hidden">
-              <img [src]="featuredPost.user.profileImageUrl" alt="Author" class="w-full h-full object-cover">
+
+       <!-- Blog Posts -->
+          <div *ngIf="!loading" class="py-8">
+            <!-- Blog Posts List -->
+            <div *ngFor="let post of blogPosts" class="border-b border-gray-200 pb-6 mb-6">
+              <!-- Make the entire post clickable using routerLink -->
+              <a [routerLink]="['/blog', post.id]" class="block hover:bg-gray-50 p-4 rounded-lg">
+                <h2 class="text-xl font-bold text-gray-800 mb-2">{{post.title}}</h2>
+                <div class="flex items-center mb-3">
+                  <div *ngIf="post.user?.profileImageUrl" class="w-8 h-8 rounded-full overflow-hidden">
+                    <img [src]="post.user.profileImageUrl" alt="Author" class="w-full h-full object-cover">
+                  </div>
+                  <div *ngIf="!post.user?.profileImageUrl" class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-500">
+                    {{post.user.name?.charAt(0)}}
+                  </div>
+                  <div class="ml-3">
+                    <p class="text-sm font-medium text-gray-900">{{post.user.name}}</p>
+                    <p class="text-xs text-gray-500">
+                      {{post.createdAt | date: 'MMM d, y'}} · {{getReadTime(post.content || '')}} min read
+                    </p>
+                  </div>
+                </div>
+                <p class="text-gray-600 text-sm mb-4">
+                  {{post.content.substring(0, 150)}}...
+                </p>
+                <div class="flex items-center text-gray-500 text-sm">
+                  <span class="flex items-center mr-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                    {{post.likes?.length || 0}}
+                  </span>
+                  <span class="flex items-center mr-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                    {{post.comments?.length || 0}}
+                  </span>
+                  <span class="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                    </svg>
+                    {{post.bookmarks?.length || 0}}
+                  </span>
+                </div>
+              </a>
             </div>
-            <div *ngIf="!featuredPost.user?.profileImageUrl" class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-500">
-              {{featuredPost.user?.name?.charAt(0)}}
-            </div>
-            <div class="ml-3">
-              <p class="text-sm font-medium text-gray-900">{{featuredPost.user?.name}} </p>
-              <p class="text-xs text-gray-500">
-                {{featuredPost.createdAt | date: 'MMM d, y'}} · 
-                {{getReadTime(featuredPost.content || '')}} min read
-              </p>
-            </div>
-          </div>
-          <a [routerLink]="['/blog', featuredPost.id]" class="text-indigo-600 font-medium hover:text-indigo-700 flex items-center">
-            Read Article
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+            
+          <!-- Empty state -->
+          <div *ngIf="blogPosts.length === 0 && !loading" class="text-center py-12">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-          </a>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No articles found</h3>
+            <p class="text-gray-500">Check back later for more content.</p>
+            <button (click)="loadBlogPosts()" class="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm">
+              Refresh
+            </button>
+          </div>
         </div>
       </div>
-    </div>
 
-
-    <!-- Blog Grid -->
-    <div *ngIf="!loading" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-      <!-- Blog Post Card -->
-      <div *ngFor="let post of blogPosts" class="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all overflow-hidden floating">
-        <div class="h-48 bg-gradient-to-r from-purple-100 to-indigo-100 relative">
-          <!-- Image -->
-          <img *ngIf="post.imageUrl" [src]="post.imageUrl" alt="{{post.title}}" class="object-cover w-full h-full">
-          <div *ngIf="!post.imageUrl" class="absolute inset-0 bg-gradient-to-br from-purple-400/30 to-indigo-500/30"></div>
-        </div>
-        <div class="p-6">
-          <div class="flex gap-2 mb-3">
-            <!-- This would be dynamic based on categories -->
-            <span class="px-3 py-1 bg-purple-50 text-purple-600 rounded-full text-xs font-medium">Design</span>
-          </div>
-          <h3 class="text-xl font-bold text-gray-900 mb-3">{{post.title}}</h3>
-          <p class="text-gray-600 text-sm mb-4">{{post.content?.substring(0, 100)}}...</p>
-          <div class="flex items-center justify-between pt-4 border-t border-gray-100">
-            <div class="flex items-center">
-              <div *ngIf="post.user?.profileImageUrl" class="w-8 h-8 rounded-full overflow-hidden">
-                <img [src]="post.user.profileImageUrl" alt="Author" class="w-full h-full object-cover">
-              </div>
-              <div *ngIf="!post.user?.profileImageUrl" class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-500 text-xs">
-                {{post.user?.name?.charAt(0)}}
-              </div>
-              <div class="ml-2">
-                <p class="text-xs font-medium text-gray-900">{{post.user?.name}}</p>
+      <!-- Sidebar - Takes 1/3 of the space and stays sticky -->
+      <div class="md:w-1/3 mt-8 md:mt-0">
+        <div class="sticky top-24">
+          <!-- Suggested users section -->
+          <div class="bg-gray-50 rounded-lg p-6 mb-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Suggested Writers</h3>
+            
+            <!-- Loading state for users -->
+            <div *ngIf="loading" class="space-y-4">
+              <div class="flex items-center" *ngFor="let i of [1,2,3,4,5]">
+                <div class="w-10 h-10 rounded-full bg-gray-200 animate-pulse"></div>
+                <div class="ml-3 flex-1">
+                  <div class="h-4 bg-gray-200 rounded w-1/2 mb-2 animate-pulse"></div>
+                  <div class="h-3 bg-gray-200 rounded w-3/4 animate-pulse"></div>
+                </div>
+                <div class="h-8 w-16 bg-gray-200 rounded animate-pulse"></div>
               </div>
             </div>
-            <p class="text-xs text-gray-500">{{post.createdAt | date: 'MMM d, y'}}</p>
+            
+            <!-- List of dynamic users -->
+            <div *ngIf="!loading" class="space-y-4">
+              <!-- Get unique users from blog posts -->
+              <div *ngFor="let user of getUniqueUsers()" class="flex items-center justify-between">
+                <div class="flex items-center">
+                  <div *ngIf="user.profileImageUrl" class="w-10 h-10 rounded-full overflow-hidden">
+                    <img [src]="user.profileImageUrl" alt="{{user.name}}" class="w-full h-full object-cover">
+                  </div>
+                  <div *ngIf="!user.profileImageUrl" class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-500">
+                    {{user.name?.charAt(0)}}
+                  </div>
+                  <div class="ml-3">
+                    <p class="text-sm font-medium text-gray-900">{{user.name}}</p>
+                    <p class="text-xs text-gray-500">{{getUserPostCount(user.id)}} articles</p>
+                  </div>
+                </div>
+                <button class="text-sm px-3 py-1 border border-gray-300 rounded-full text-gray-700 hover:bg-gray-100">
+                  Follow
+                </button>
+              </div>
+            </div>
           </div>
-          <a [routerLink]="['/blog', post.id]" class="block mt-4 text-indigo-600 text-sm font-medium hover:text-indigo-700">
-            Read more →
-          </a>
+
+          <!-- Popular topics section -->
+          <div class="bg-gray-50 rounded-lg p-6 mb-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Popular in Tech</h3>
+            <div class="space-y-3">
+              <div class="flex items-start pb-3 border-b border-gray-100">
+                <span class="text-gray-400 text-lg mr-3">01</span>
+                <div>
+                  <h4 class="font-medium text-gray-900">The Future of AI in Web Development</h4>
+                  <p class="text-xs text-gray-500 mt-1">Trending In Tech</p>
+                </div>
+              </div>
+              <div class="flex items-start pb-3 border-b border-gray-100">
+                <span class="text-gray-400 text-lg mr-3">02</span>
+                <div>
+                  <h4 class="font-medium text-gray-900">Clean Code Practices for Angular Projects</h4>
+                  <p class="text-xs text-gray-500 mt-1">Developers love this</p>
+                </div>
+              </div>
+              <div class="flex items-start pb-3 border-b border-gray-100">
+                <span class="text-gray-400 text-lg mr-3">03</span>
+                <div>
+                  <h4 class="font-medium text-gray-900">TypeScript: Why It's Taking Over</h4>
+                  <p class="text-xs text-gray-500 mt-1">Read by 12k developers</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-
-    <!-- Empty state -->
-    <div *ngIf="blogPosts.length === 0 && !loading" class="text-center py-12">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-      </svg>
-      <h3 class="text-lg font-medium text-gray-900 mb-2">No articles found</h3>
-      <p class="text-gray-500">Try adjusting your search or filter to find what you're looking for.</p>
-      <button (click)="loadBlogPosts()" class="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm">
-        Reset filters
-      </button>
-    </div>
-
-    <!-- Pagination -->
-    <div *ngIf="blogPosts.length > 0 && !loading" class="flex justify-center">
-      <nav class="inline-flex items-center">
-        <a href="#" class="px-3 py-2 rounded-l-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
-          </svg>
-        </a>
-        <a href="#" class="px-4 py-2 border-t border-b border-gray-300 bg-indigo-50 text-indigo-600 font-medium">1</a>
-        <a href="#" class="px-4 py-2 border-t border-b border-gray-300 bg-white text-gray-700 hover:bg-gray-50">2</a>
-        <a href="#" class="px-4 py-2 border-t border-b border-gray-300 bg-white text-gray-700 hover:bg-gray-50">3</a>
-        <span class="px-4 py-2 border-t border-b border-gray-300 bg-white text-gray-700">...</span>
-        <a href="#" class="px-4 py-2 border-t border-b border-gray-300 bg-white text-gray-700 hover:bg-gray-50">8</a>
-        <a href="#" class="px-3 py-2 rounded-r-lg border border-gray-300 bg-white text-gray-500 hover:bg-gray-50">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-          </svg>
-        </a>
-      </nav>
-    </div>
-  </div>
-</section>
-
-<!-- Newsletter Section -->
-<section class="bg-gray-50 py-16">
-  <div class="container mx-auto px-6 text-center">
-    <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">Stay up-to-date with our latest content</h2>
-    <p class="text-lg text-gray-600 max-w-2xl mx-auto mb-8">Sign up for our newsletter to receive weekly digests of our best articles, tutorials, and insights.</p>
-    <div class="max-w-md mx-auto flex">
-      <input type="email" placeholder="Your email address" class="flex-1 px-4 py-3 rounded-l-lg border border-gray-300 focus:ring-2 focus:ring-indigo-300 focus:border-indigo-500">
-      <button class="px-6 py-3 bg-indigo-600 text-white font-medium rounded-r-lg hover:bg-indigo-700 transition-colors shadow-md">
-        Subscribe
-      </button>
     </div>
   </div>
 </section>

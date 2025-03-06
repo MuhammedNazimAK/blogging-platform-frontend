@@ -1,8 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../core/services/auth.service';
-import { MatDialog } from '@angular/material/dialog';
-import { LoginComponent } from '../authentication/login/login.component';
-import { SignupComponent } from '../authentication/signup/signup.component';
+import { AuthModalService } from '../core/services/auth-modal.service';
 
 
 @Component({
@@ -48,22 +45,11 @@ export class HomeComponent implements OnInit {
     }
   ];
 
-  constructor(private authService: AuthService, private dialog: MatDialog) {}
+  constructor(private authModalService: AuthModalService) {}
 
   ngOnInit(): void {}
 
-  openAuthModal(mode: 'login' | 'signup'): void {
-    if (mode === 'login') {
-      this.dialog.open(LoginComponent, {
-        width: '400px',
-        panelClass: 'auth-modal'
-      });
-    } else if (mode === 'signup') {
-      this.dialog.open(SignupComponent, {
-        width: '400px',
-        panelClass: 'auth-modal'
-      });
-    }
+  openAuthModal(type: 'login' | 'signup'): void {
+    this.authModalService.openModal(type);
   }
-
 }

@@ -7,14 +7,10 @@ import { BlogPost } from 'src/app/models/blog-post.model';
   templateUrl: './blog-listing.component.html',
   styleUrls: ['./blog-listing.component.css']
 })
-
 export class BlogListComponent implements OnInit {
   blogPosts: BlogPost[] = [];
-  featuredPost: BlogPost | null = null;
   loading = true;
-  selectedCategory: string = 'All';
-  categories = ['All', 'Technology', 'Design', 'Writing', 'Productivity'];
-  searchTerm: string = '';
+  loadingTimeout: any;
 
   constructor(private blogService: BlogService) {}
 
@@ -24,44 +20,55 @@ export class BlogListComponent implements OnInit {
 
   loadBlogPosts(): void {
     this.loading = true;
-    this.blogService.getBlogPosts().subscribe({
-      next: (posts) => {
-        if (posts.length > 0) {
-          // Set the first post as featured (or you could have a field in your model to determine this)
-          this.featuredPost = posts[0];
-          // Remove featured post from regular list
-          this.blogPosts = posts.slice(1);
-        }
-        this.loading = false;
-      },
-      error: (error) => {
-        console.error('Error loading blog posts', error);
-        this.loading = false;
-      }
-    });
-  }
-
-  searchPosts(): void {
-    if (!this.searchTerm.trim()) {
-      this.loadBlogPosts();
-      return;
-    }
     
-    this.blogService.searchBlogPosts(this.searchTerm).subscribe({
-      next: (posts) => {
-        this.blogPosts = posts;
-        // Reset featured post if doing a search
-        this.featuredPost = null;
-      },
-      error: (error) => {
-        console.error('Error searching posts', error);
-      }
-    });
+    this.loadingTimeout = setTimeout(() => {
+      this.blogService.getBlogPosts().subscribe({
+        next: (posts) => {
+          this.blogPosts = posts;
+          this.loading = false;
+        },
+        error: (error) => {
+          console.error('Error loading blog posts', error);
+          this.loading = false;
+        }
+      });
+    }, 1000);
   }
 
   getReadTime(content: string): number {
     // Average reading speed: 200 words per minute
     const words = content.split(' ').length;
-    return Math.ceil(words / 200);
+    return Math.max(1, Math.ceil(words / 200)); // Ensure minimum 1 minute
+  }
+
+  // Get unique users from blog posts for the sidebar
+  getUniqueUsers() {
+    const uniqueUsers = new Map();
+    
+    this.blogPosts.forEach(post => {
+      if (post.user && !uniqueUsers.has(post.user.id)) {
+        uniqueUsers.set(post.user.id, post.user);
+      }
+    });
+    
+    // Return array of unique users (limit to 5)
+    return Array.from(uniqueUsers.values()).slice(0, 5);
+  }
+
+  getUserPostCount(userId: string): number {
+    return this.blogPosts.filter(post => post.user?.id === userId).length;
+  }
+
+  openBlogDetail(post: BlogPost): void {
+
+    console.log('Opening blog detail for:', post.id);
+
+  }
+
+  ngOnDestroy() {
+    // Clear timeout if component is destroyed
+    if (this.loadingTimeout) {
+      clearTimeout(this.loadingTimeout);
+    }
   }
 }
