@@ -16,6 +16,7 @@ import { NavbarComponent } from './shared/navbar/navbar.component';
 import { FooterComponent } from './shared/footer/footer.component';
 import { AuthModalContainerComponent } from './shared/auth-modal/auth-modal-container.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { BlogWriteComponent } from './blog/blog-write/blog-write.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     NavbarComponent,
     FooterComponent,
     AuthModalContainerComponent,
+    BlogWriteComponent,
   ],
   imports: [
     BrowserModule,
