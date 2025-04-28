@@ -1,6 +1,11 @@
-// navbar.component.ts
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../core/services/auth.service';
+import { FormControl } from '@angular/forms';
+import { Router } from '@angular/router';
+import { debounceTime, distinctUntilChanged, switchMap, tap, catchError } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { of } from 'rxjs';
+
 
 @Component({
   selector: 'app-navbar',
@@ -11,23 +16,55 @@ export class NavbarComponent implements OnInit {
   isDropdownOpen = false;
   isMobileMenuOpen = false;
 
-  constructor(public authService: AuthService) {}
+  searchControl = new FormControl('');
+  searchResults: any[] = [];
+  isLoadingSearch = false;
+
+  constructor(
+    public authService: AuthService,
+    private http: HttpClient,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
-    // Initialize any required data
+    this.searchControl.valueChanges.pipe(
+
+      debounceTime(300),
+      distinctUntilChanged(), // only fire if value changed
+      tap(() => this.isLoadingSearch = true),
+      switchMap(query => {
+
+        if (!query?.trim()) {
+          // if empty, reset results
+          this.searchResults = [];
+          this.isLoadingSearch = false;
+          return of([]);
+        }
+
+        return this.http.get<any[]>(`http://localhost:5000/search?q=${query}`).pipe(
+          catchError(() => {
+            this.isLoadingSearch = false;
+            return of([]);
+          })
+        );
+      }),
+
+      tap(() => this.isLoadingSearch = false)
+    ).subscribe(results => {
+      this.searchResults = results;
+    });
   }
+
 
   // Toggle user dropdown menu
   toggleDropdown(): void {
     this.isDropdownOpen = !this.isDropdownOpen;
   }
 
-  // Close dropdown when clicking outside
   closeDropdown(): void {
     this.isDropdownOpen = false;
   }
 
-  // Toggle mobile menu
   toggleMobileMenu(): void {
     this.isMobileMenuOpen = !this.isMobileMenuOpen;
   }
@@ -53,6 +90,12 @@ export class NavbarComponent implements OnInit {
 
   openLoginModal(): void {
     this.authService.openAuthModal('login');
+  }
+
+  goToBlog(blogId: string) {
+    this.router.navigate(['/blogs', blogId]);
+    this.searchResults = [];
+    this.searchControl.setValue('');
   }
 
   logout(): void {

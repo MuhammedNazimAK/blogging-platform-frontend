@@ -3,14 +3,16 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap, catchError, throwError, switchMap } from 'rxjs';
 import { Router } from '@angular/router';
 
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role?: string;
+}
+
 export interface LoginResponse {
   token: string;
-  user: {
-    id: string;
-    name: string;
-    email: string;
-    role?: string; // Made optional since it appears in one interface but not the other
-  };
+  user: User;
 }
 
 export interface SignupResponse {
@@ -29,11 +31,13 @@ export interface AuthModalState {
 })
 export class AuthService {
   private apiUrl = 'http://localhost:5000/auth';
+  private readonly STORAGE_TOKEN_KEY = 'token';
+  private readonly STORAGE_USER_KEY = 'currentUser';
   
   // BehaviorSubjects to track authentication state and modal state
-  private isLoggedInSubject = new BehaviorSubject<boolean>(this.checkInitialLoginState());
+  private isLoggedInSubject = new BehaviorSubject<boolean>(this.hasValidToken());
   private authModalStateSubject = new BehaviorSubject<AuthModalState>({ isOpen: false, mode: null });
-  private currentUserSubject = new BehaviorSubject<any>(this.getCurrentUserFromStorage());
+  private currentUserSubject = new BehaviorSubject<User | null>(this.getUserFromStorage());
   
   // Public observables that components can subscribe to
   public isLoggedIn$ = this.isLoggedInSubject.asObservable();
@@ -43,17 +47,43 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private router: Router
-  ) {}
-  
-  // Check if user is already logged in when service initializes
-  private checkInitialLoginState(): boolean {
-    return !!sessionStorage.getItem('token');
+  ) {
+    // Refresh the authentication state when the service initializes
+    this.refreshAuthState();
   }
   
-  // Retrieve stored user data
-  private getCurrentUserFromStorage(): any {
-    const userJson = sessionStorage.getItem('currentUser');
+  // Check if user has a valid token
+  private hasValidToken(): boolean {
+    const token = sessionStorage.getItem(this.STORAGE_TOKEN_KEY);
+    if (!token) return false;
+    
+    // Basic token expiry check
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.exp * 1000 > Date.now();
+    } catch (e) {
+      return false;
+    }
+  }
+  
+  private getUserFromStorage(): User | null {
+    const userJson = sessionStorage.getItem(this.STORAGE_USER_KEY);
     return userJson ? JSON.parse(userJson) : null;
+  }
+  
+  // Refresh authentication state (useful for app initialization or after storage changes)
+  private refreshAuthState(): void {
+    const isLoggedIn = this.hasValidToken();
+    this.isLoggedInSubject.next(isLoggedIn);
+    
+    if (isLoggedIn) {
+      this.currentUserSubject.next(this.getUserFromStorage());
+    } else {
+      // Clear any invalid state
+      sessionStorage.removeItem(this.STORAGE_TOKEN_KEY);
+      sessionStorage.removeItem(this.STORAGE_USER_KEY);
+      this.currentUserSubject.next(null);
+    }
   }
   
   // Modal control methods
@@ -65,80 +95,66 @@ export class AuthService {
     this.authModalStateSubject.next({ isOpen: false, mode: null });
   }
   
-  public getAuthModalState(): AuthModalState {
-    return this.authModalStateSubject.getValue();
-  }
-  
   // Authentication methods
   public login(credentials: { email: string, password: string }): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, credentials)
       .pipe(
-        tap(response => {
-          this.handleAuthSuccess(response);
-        }),
-        catchError(error => {
-          return throwError(() => error);
-        })
+        tap(response => this.handleAuthSuccess(response)),
+        catchError(error => throwError(() => error))
       );
   }
   
   public signup(userData: { name: string, email: string, password: string }): Observable<LoginResponse> {
-    // First sign up the user
     return this.http.post<SignupResponse>(`${this.apiUrl}/signup`, userData)
       .pipe(
-        // After successful signup, automatically log in
-        switchMap(() => {
-          // Use the credentials just provided for signup
-          const loginCredentials = {
-            email: userData.email,
-            password: userData.password
-          };
-          
-          // Call login endpoint
-          return this.login(loginCredentials);
-        }),
-        catchError(error => {
-          return throwError(() => error);
-        })
+        switchMap(() => this.login({
+          email: userData.email,
+          password: userData.password
+        })),
+        catchError(error => throwError(() => error))
       );
   }
   
   private handleAuthSuccess(response: LoginResponse): void {
-    // Store token and user info
-    sessionStorage.setItem('token', response.token);
-    sessionStorage.setItem('currentUser', JSON.stringify(response.user));
+
+    sessionStorage.setItem(this.STORAGE_TOKEN_KEY, response.token);
+    sessionStorage.setItem(this.STORAGE_USER_KEY, JSON.stringify(response.user));
     
     // Update subjects
     this.isLoggedInSubject.next(true);
     this.currentUserSubject.next(response.user);
     
-    // Close modal and navigate to home page
     this.closeAuthModal();
     this.router.navigate(['/']);
   }
   
   public logout(): void {
-    // Clear storage
-    sessionStorage.removeItem('token');
-    sessionStorage.removeItem('currentUser');
+
+    sessionStorage.removeItem(this.STORAGE_TOKEN_KEY);
+    sessionStorage.removeItem(this.STORAGE_USER_KEY);
     
     // Update subjects
     this.isLoggedInSubject.next(false);
     this.currentUserSubject.next(null);
     
-    // Navigate to home
-    this.router.navigate(['']);
+    this.router.navigate(['/']);
   }
   
+  // Utility methods
   public isLoggedIn(): boolean {
     return this.isLoggedInSubject.value;
   }
   
   public getToken(): string | null {
-    return sessionStorage.getItem('token');
+    return sessionStorage.getItem(this.STORAGE_TOKEN_KEY);
   }
   
-  public getCurrentUser(): any {
+  public getCurrentUser(): User | null {
     return this.currentUserSubject.value;
+  }
+  
+  public getUserId(): string | null {
+    const user = this.getCurrentUser();
+    return user ? user.id : null;
   }
 }

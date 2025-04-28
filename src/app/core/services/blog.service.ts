@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { BlogPost } from 'src/app/models/blog-post.model';
 
@@ -10,6 +10,15 @@ import { BlogPost } from 'src/app/models/blog-post.model';
 
 export class BlogService {
   private baseUrl = 'http://localhost:5000/blogs';
+  private likeUrl = 'http://localhost:5000/likes';
+  private bookmarkUrl = 'http://localhost:5000/bookmarks'
+
+  private getAuthHeaders(): HttpHeaders {
+    const token = sessionStorage.getItem('token');
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+  }
 
   constructor(private http: HttpClient) {}
 
@@ -27,40 +36,36 @@ export class BlogService {
     });
   }
 
-  checkUserLiked(blogPostId: string, userId: string): Observable<boolean> {
-    return this.http.get<boolean>(`${this.baseUrl}/${blogPostId}/likes/check`, {
-      params: { userId },
-    });
+  checkUserLiked(blogPostId: string): Observable<boolean> {
+    return this.http.get<boolean>(`${this.likeUrl}/${blogPostId}/likes/check`, { headers: this.getAuthHeaders() });
+  }
+  
+  likePost(blogPostId: string): Observable<void> {
+    return this.http.post<void>(`${this.likeUrl}/${blogPostId}/likes`, {}, { headers: this.getAuthHeaders() });
+  }
+  
+  unlikePost(blogPostId: string): Observable<void> {
+    return this.http.delete<void>(`${this.likeUrl}/${blogPostId}/likes`, { headers: this.getAuthHeaders() });
+  }
+  
+  checkUserBookmarked(blogPostId: string): Observable<boolean> {
+    return this.http.get<boolean>(`${this.bookmarkUrl}/${blogPostId}/bookmarks/check`, { headers: this.getAuthHeaders() });
+  }
+  
+  addBookmark(blogPostId: string): Observable<void> {
+    return this.http.post<void>(`${this.bookmarkUrl}/${blogPostId}/bookmarks`, { blogPostId }, { headers: this.getAuthHeaders() });
+  }
+  
+  removeBookmark(blogPostId: string): Observable<void> {
+    return this.http.delete<void>(`${this.bookmarkUrl}/${blogPostId}/bookmarks`, { headers: this.getAuthHeaders() });
   }
 
-  likePost(blogPostId: string, userId: string): Observable<void> {
-    return this.http.post<void>(`${this.baseUrl}/${blogPostId}/likes`, { userId });
-  }
-
-  unlikePost(blogPostId: string, userId: string): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/${blogPostId}/likes`, {
-      params: { userId },
-    });
-  }
-
-  checkUserBookmarked(blogPostId: string, userId: string): Observable<boolean> {
-    return this.http.get<boolean>(`${this.baseUrl}/${blogPostId}/bookmarks/check`, {
-      params: { userId },
-    });
-  }
-
-  addBookmark(blogPostId: string, userId: string): Observable<void> {
-    return this.http.post<void>(`${this.baseUrl}/${blogPostId}/bookmarks`, { userId });
-  }
-
-  removeBookmark(blogPostId: string, userId: string): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/${blogPostId}/bookmarks`, {
-      params: { userId },
-    });
-  }
-
-  addComment(comment: { content: string; blogPostId: string; userId: string }): Observable<Comment> {
+  addComment(comment: { content: string; blogPostId: string; }): Observable<Comment> {
     return this.http.post<Comment>(`${this.baseUrl}/${comment.blogPostId}/comments`, comment);
+  }
+
+  createBlog(blog: BlogPost): Observable<BlogPost> {
+    return this.http.post<BlogPost>(this.baseUrl, blog);
   }
 
 }

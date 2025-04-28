@@ -1,4 +1,3 @@
-// blog-detail.component.ts
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BlogService } from '../../core/services/blog.service';
@@ -61,17 +60,15 @@ export class BlogDetailComponent implements OnInit {
 
   checkUserInteractions(): void {
     if (!this.blogPost || !this.authService.isLoggedIn()) return;
-    
-    const userId = this.authService.getCurrentUser();
-    
+        
     // Check if user liked the post
-    this.blogService.checkUserLiked(this.blogPost.id!, userId).subscribe({
+    this.blogService.checkUserLiked(this.blogPost.id!).subscribe({
       next: (liked) => this.userLiked = liked,
       error: (error) => console.error('Error checking like status', error)
     });
     
     // Check if user bookmarked the post
-    this.blogService.checkUserBookmarked(this.blogPost.id!, userId).subscribe({
+    this.blogService.checkUserBookmarked(this.blogPost.id!).subscribe({
       next: (bookmarked) => this.userBookmarked = bookmarked,
       error: (error) => console.error('Error checking bookmark status', error)
     });
@@ -86,7 +83,6 @@ export class BlogDetailComponent implements OnInit {
     const comment = {
       content: this.commentForm.value.content,
       blogPostId: this.blogPost.id,
-      userId: this.authService.getCurrentUser()
     };
     
     this.blogService.addComment(comment).subscribe({
@@ -117,11 +113,9 @@ export class BlogDetailComponent implements OnInit {
       return;
     }
     
-    const userId = this.authService.getCurrentUser();
-    
     if (this.userLiked) {
       // Unlike
-      this.blogService.unlikePost(this.blogPost.id!, userId).subscribe({
+      this.blogService.unlikePost(this.blogPost.id!).subscribe({
         next: () => {
           this.userLiked = false;
           // Update like count if you're tracking it
@@ -130,7 +124,7 @@ export class BlogDetailComponent implements OnInit {
       });
     } else {
       // Like
-      this.blogService.likePost(this.blogPost.id!, userId).subscribe({
+      this.blogService.likePost(this.blogPost.id!).subscribe({
         next: () => {
           this.userLiked = true;
           // Update like count if you're tracking it
@@ -139,18 +133,16 @@ export class BlogDetailComponent implements OnInit {
       });
     }
   }
-
+  
   toggleBookmark(): void {
     if (!this.blogPost || !this.authService.isLoggedIn()) {
       this.router.navigate(['/login']);
       return;
     }
     
-    const userId = this.authService.getCurrentUser();
-    
     if (this.userBookmarked) {
       // Remove bookmark
-      this.blogService.removeBookmark(this.blogPost.id!, userId).subscribe({
+      this.blogService.removeBookmark(this.blogPost.id!).subscribe({
         next: () => {
           this.userBookmarked = false;
         },
@@ -158,7 +150,7 @@ export class BlogDetailComponent implements OnInit {
       });
     } else {
       // Add bookmark
-      this.blogService.addBookmark(this.blogPost.id!, userId).subscribe({
+      this.blogService.addBookmark(this.blogPost.id!).subscribe({
         next: () => {
           this.userBookmarked = true;
         },
@@ -181,5 +173,36 @@ export class BlogDetailComponent implements OnInit {
     }
     
     // Call your service to follow author
+  }
+
+shareToSocial(platform: 'twitter' | 'facebook' | 'linkedin'): void {
+  const url = encodeURIComponent(window.location.href);
+  const title = encodeURIComponent(this.blogPost?.title ?? 'Untitled Blog Post');
+  let shareUrl = '';
+  
+  switch(platform) {
+    case 'twitter':
+      shareUrl = `https://twitter.com/intent/tweet?text=${title}&url=${url}`;
+      break;
+    case 'facebook':
+      shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+      break;
+    case 'linkedin':
+      shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
+      break;
+  }
+  
+  window.open(shareUrl, '_blank');
+}
+
+copyLink(): void {
+  navigator.clipboard.writeText(window.location.href)
+    .then(() => {
+      // You could add a toast notification here
+      console.log('Link copied to clipboard');
+    })
+    .catch(err => {
+      console.error('Could not copy text: ', err);
+    });
   }
 }

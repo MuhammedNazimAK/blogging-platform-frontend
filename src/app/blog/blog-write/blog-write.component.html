@@ -16,13 +16,13 @@
         <div class="mr-3"> <!-- 12px right margin -->
           <button
             (click)="publishBlog()"
-            [disabled]="isPublishing"
+            [disabled]="isPublishing || !title.trim() || !content.trim()"
             class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full shadow-sm text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed">
             <span *ngIf="isPublishing">Publishing...</span>
             <span *ngIf="!isPublishing">Publish</span>
           </button>
         </div>
-      </div>
+      </div>  
     </div>
   </nav>
 
@@ -59,7 +59,7 @@
           accept="image/*" 
           class="hidden" />
       </div>
-      <p *ngIf="uploadError" class="mt-2 text-sm text-red-600">{{ uploadError }}</p>
+      <!-- <p *ngIf="uploadError" class="mt-2 text-sm text-red-600">{{ uploadError }}</p> -->
       <p *ngIf="selectedFile" class="mt-2 text-sm text-gray-500">{{ selectedFile.name }} ({{ formatFileSize(selectedFile.size) }})</p>
     </div>
 
@@ -100,7 +100,7 @@
   <div class="sm:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3">
     <button 
       (click)="publishBlog()" 
-      [disabled]="isPublishing" 
+      [disabled]="isPublishing || !title.trim() || !content.trim()" 
       class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full shadow-sm text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed">
       <span *ngIf="isPublishing">Publishing...</span>
       <span *ngIf="!isPublishing">Publish</span>

@@ -17,6 +17,8 @@ import { FooterComponent } from './shared/footer/footer.component';
 import { AuthModalContainerComponent } from './shared/auth-modal/auth-modal-container.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BlogWriteComponent } from './blog/blog-write/blog-write.component';
+import { BlogSuccessModalComponent } from './blog/blog-success-modal/blog-success-modal.component';
+import { BlogEditorComponent } from './blog/blog-editor/blog-editor.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +32,8 @@ import { BlogWriteComponent } from './blog/blog-write/blog-write.component';
     FooterComponent,
     AuthModalContainerComponent,
     BlogWriteComponent,
+    BlogSuccessModalComponent,
+    BlogEditorComponent,
   ],
   imports: [
     BrowserModule,

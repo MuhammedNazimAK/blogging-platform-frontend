@@ -235,9 +235,10 @@ export class BlogWriteComponent implements OnInit, OnDestroy {
     .subscribe({
       next: (response: any) => {
         console.log('Blog post created successfully', response);
-        // Clear draft after successful publishing
+
         this.clearDraft();
-        // this.router.navigate(response?.id ? ['/blogs', response.id] : ['/blogs']);
+        
+        this.router.navigate(['/']);
       },
 
         error: (error) => {

@@ -41,7 +41,7 @@
             <!-- Blog Posts List -->
             <div *ngFor="let post of blogPosts" class="border-b border-gray-200 pb-6 mb-6">
               <!-- Make the entire post clickable using routerLink -->
-              <a [routerLink]="['/blog', post.id]" class="block hover:bg-gray-50 p-4 rounded-lg">
+              <a [routerLink]="['/blogs', post.id]" class="block hover:bg-gray-50 p-4 rounded-lg">
                 <h2 class="text-xl font-bold text-gray-800 mb-2">{{post.title}}</h2>
                 <div class="flex items-center mb-3">
                   <div *ngIf="post.user?.profileImageUrl" class="w-8 h-8 rounded-full overflow-hidden">

@@ -13,7 +13,7 @@ const routes: Routes = [
   
   // Protected routes - require authentication
   { path: 'blogs', component: BlogListComponent, canActivate: [AuthGuard], data: { requiresAuth: true } },
-  { path: 'blog/:id', component: BlogDetailComponent, canActivate: [AuthGuard], data: { requiresAuth: true } },
+  { path: 'blogs/:id', component: BlogDetailComponent, canActivate: [AuthGuard], data: { requiresAuth: true } },
   { path: 'write', component: BlogWriteComponent, canActivate: [AuthGuard], data: { requiresAuth: true } },
   
   // Fallback route

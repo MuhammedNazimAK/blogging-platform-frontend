@@ -9,10 +9,11 @@
       </a>
 
       <!-- Search Bar -->
-      <div class="hidden md:block max-w-xs">
+      <div class="hidden md:block max-w-xs relative">
         <div class="relative">
-          <input 
+          <input
             type="text" 
+            [formControl]="searchControl"
             placeholder="Search blogs..." 
             class="w-full rounded-full border-gray-300 bg-gray-50 py-2 pl-4 pr-10 transition focus:border-gray-300 focus:outline-none"
           />
@@ -22,8 +23,22 @@
             </svg>
           </div>
         </div>
+
+            <div 
+          *ngIf="searchResults.length > 0" 
+          class="absolute left-0 top-full bg-white border border-gray-200 rounded-md mt-1 max-h-60 overflow-y-auto z-20"
+        >
+          <div 
+            *ngFor="let result of searchResults" 
+            class="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+            (click)="goToBlog(result.id)"
+          >
+            {{ result.title }}
+          </div>
+        </div>
       </div>
     </div>
+
 
     <!-- Right Menu Items (moved to exact corner) -->
     <div class="flex items-center space-x-6">

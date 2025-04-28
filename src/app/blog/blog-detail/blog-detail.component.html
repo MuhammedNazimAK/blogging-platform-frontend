@@ -88,15 +88,6 @@
   <div [innerHTML]="blogPost.content"></div>
 </article>
 
-<!-- Tags -->
-<div class="max-w-4xl mx-auto mb-16">
-  <div class="flex flex-wrap gap-2">
-    <a *ngFor="let tag of blogPost?.tags" href="#" class="px-4 py-2 bg-gray-100 rounded-lg text-gray-700 text-sm hover:bg-gray-200 transition-colors">
-      {{tag}}
-    </a>
-  </div>
-</div>
-
 <!-- Author Bio -->
 <div class="max-w-4xl mx-auto mb-16 bg-gray-50 rounded-2xl p-8">
   <div class="flex flex-col md:flex-row items-center md:items-start">
@@ -220,47 +211,3 @@
     <p class="text-gray-500">Be the first to share your thoughts on this article</p>
   </div>
 </div>
-
-<!-- Related Articles -->
-<div class="border-t border-gray-100 pt-16 mb-16">
-  <div class="container mx-auto px-6">
-    <h2 class="text-2xl font-bold text-gray-900 mb-10">You might also like</h2>
-    
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-      <!-- Related Post Card -->
-      <div class="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all overflow-hidden">
-        <div class="h-48 bg-gradient-to-r from-purple-100 to-indigo-100 relative">
-          <!-- Image (this would be dynamic) -->
-          <img src="https://via.placeholder.com/600x400" alt="Related post" class="object-cover w-full h-full">
-        </div>
-        <div class="p-6">
-          <div class="flex gap-2 mb-3">
-            <!-- This would be dynamic based on categories -->
-            <span class="px-3 py-1 bg-purple-50 text-purple-600 rounded-full text-xs font-medium">Design</span>
-          </div>
-          <h3 class="text-xl font-bold text-gray-900 mb-3">Creating User-Friendly Interfaces</h3>
-          <p class="text-gray-600 text-sm mb-4">Learn the principles of intuitive design and how to apply them to your projects...</p>
-          <a href="#" class="block mt-4 text-indigo-600 text-sm font-medium hover:text-indigo-700">
-            Read more →
-          </a>
-        </div>
-      </div>
-      
-      <!-- More related posts would be dynamically generated -->
-    </div>
-  </div>
-</div>
-
-<!-- Newsletter Section -->
-<section class="bg-gray-50 py-16">
-  <div class="container mx-auto px-6 text-center">
-    <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">Enjoyed this article?</h2>
-    <p class="text-lg text-gray-600 max-w-2xl mx-auto mb-8">Subscribe to our newsletter to get weekly updates on our latest content.</p>
-    <div class="max-w-md mx-auto flex">
-      <input type="email" placeholder="Your email address" class="flex-1 px-4 py-3 rounded-l-lg border border-gray-300 focus:ring-2 focus:ring-indigo-300 focus:border-indigo-500">
-      <button class="px-6 py-3 bg-indigo-600 text-white font-medium rounded-r-lg hover:bg-indigo-700 transition-colors shadow-md">
-        Subscribe
-      </button>
-    </div>
-  </div>
-</section>
